@@ -6,5 +6,5 @@ export interface AssinanteRepository {
   buscarAtivoPorId(id: string): Promise<Assinante | null>;
   listarAtivos(nome?: string): Promise<Assinante[]>;
   atualizarAtivo(id: string, dados: AtualizacaoAssinante): Promise<Assinante | null>;
-  desativar(id: string): Promise<boolean>;
+  deletar(id: string, exclusaoLogica?: boolean): Promise<boolean>;
 }

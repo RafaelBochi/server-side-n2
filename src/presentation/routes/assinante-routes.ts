@@ -7,6 +7,6 @@ export function criarRotasAssinantes(controller: AssinanteController): Router {
   rotas.get("/assinantes", controller.listar);
   rotas.get("/assinantes/:id", controller.buscarPorId);
   rotas.patch("/assinantes/:id", controller.atualizar);
-  rotas.delete("/assinantes/:id", controller.desativar);
+  rotas.delete("/assinantes/:id", controller.deletar);
   return rotas;
 }

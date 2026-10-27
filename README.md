@@ -17,14 +17,14 @@ A API inicia em `http://localhost:3000`; o PostgreSQL é exposto em `localhost:5
 
 ## Endpoints
 
-| Método | Rota | Descrição |
-| --- | --- | --- |
-| POST | `/assinantes` | Cria um assinante. |
-| GET | `/assinantes` | Lista todos os assinantes ativos. |
-| GET | `/assinantes?nome=maria` | Busca ativa, parcial e sem diferenciar maiúsculas/minúsculas. |
-| GET | `/assinantes/:id` | Busca assinante ativo por UUID. |
-| PATCH | `/assinantes/:id` | Atualiza `nome` e/ou `email`. |
-| DELETE | `/assinantes/:id` | Exclusão lógica: define `ativo` como `false`. |
+| Método | Rota                     | Descrição                                                     |
+| ------ | ------------------------ | ------------------------------------------------------------- |
+| POST   | `/assinantes`            | Cria um assinante.                                            |
+| GET    | `/assinantes`            | Lista todos os assinantes ativos.                             |
+| GET    | `/assinantes?nome=maria` | Busca ativa, parcial e sem diferenciar maiúsculas/minúsculas. |
+| GET    | `/assinantes/:id`        | Busca assinante ativo por UUID.                               |
+| PATCH  | `/assinantes/:id`        | Atualiza `nome` e/ou `email`.                                 |
+| DELETE | `/assinantes/:id`        | Exclui um assinante, lógica ou definitivamente.               |
 
 Exemplo de criação:
 
@@ -36,12 +36,11 @@ Exemplo de criação:
 }
 ```
 
-O CPF é validado, normalizado para 11 dígitos e é único. Registros inativos não aparecem em GET, PATCH ou DELETE e respondem `404`. Erros seguem o formato `{ "erro": "mensagem" }`.
+## Exclusão
 
-## Comandos
+`DELETE /assinantes/:id` aceita `?logico=true` para exclusão lógica e `?logico=false` para exclusão definitiva. Quando não há o parâmetro, o repositório usa a variável de ambiente `EXCLUSAO_LOGICA`.
 
-```bash
-npm run build
-npm test
-npm run prisma:migrate -- --name nome_da_migration
-```
+- `EXCLUSAO_LOGICA=true`: define `ativo` como `false`.
+- `EXCLUSAO_LOGICA=false`: remove definitivamente o registro.
+- Variável ausente: usa exclusão lógica como padrão seguro.
+- Outro valor: retorna erro de configuração.

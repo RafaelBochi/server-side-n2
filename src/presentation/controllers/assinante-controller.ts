@@ -3,7 +3,7 @@ import { z } from "zod";
 import { AtualizarAssinante } from "../../use_cases/atualizar-assinante.js";
 import { BuscarAssinante } from "../../use_cases/buscar-assinante.js";
 import { CriarAssinante } from "../../use_cases/criar-assinante.js";
-import { DesativarAssinante } from "../../use_cases/desativar-assinante.js";
+import { DeletarAssinante } from "../../use_cases/deletar-assinante.js";
 import { ListarAssinantes } from "../../use_cases/listar-assinantes.js";
 
 const idSchema = z.object({ id: z.string().uuid("id deve ser um UUID válido") });
@@ -19,6 +19,7 @@ const atualizarSchema = z.object({
   message: "Informe nome ou email para atualizar",
 });
 const buscaSchema = z.object({ nome: z.string().trim().min(1, "nome não pode ser vazio").optional() }).strict();
+const exclusaoSchema = z.object({ logico: z.enum(["true", "false"]).optional() }).strict();
 
 export class AssinanteController {
   constructor(
@@ -26,7 +27,7 @@ export class AssinanteController {
     private readonly listarAssinantes: ListarAssinantes,
     private readonly buscarAssinante: BuscarAssinante,
     private readonly atualizarAssinante: AtualizarAssinante,
-    private readonly desativarAssinante: DesativarAssinante,
+    private readonly deletarAssinante: DeletarAssinante,
   ) {}
 
   criar = async (req: Request, res: Response): Promise<void> => {
@@ -51,9 +52,10 @@ export class AssinanteController {
     res.json(await this.atualizarAssinante.executar(id, dados));
   };
 
-  desativar = async (req: Request, res: Response): Promise<void> => {
+  deletar = async (req: Request, res: Response): Promise<void> => {
     const { id } = idSchema.parse(req.params);
-    await this.desativarAssinante.executar(id);
+    const { logico } = exclusaoSchema.parse(req.query);
+    await this.deletarAssinante.executar(id, logico === undefined ? undefined : logico === "true");
     res.status(204).send();
   };
 }

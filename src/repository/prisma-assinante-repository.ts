@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { ErroAplicacao } from "../domain/errors.js";
 import type { Assinante, AtualizacaoAssinante, NovoAssinante } from "../domain/assinante.js";
 import type { AssinanteRepository } from "./assinante-repository.js";
 
@@ -33,11 +34,29 @@ export class PrismaAssinanteRepository implements AssinanteRepository {
     return this.prisma.assinante.update({ where: { id }, data: dados });
   }
 
-  async desativar(id: string): Promise<boolean> {
+  async deletar(id: string, exclusaoLogica?: boolean): Promise<boolean> {
+    const deveExcluirLogicamente = this.obterExclusaoLogica(exclusaoLogica);
+
+    if (!deveExcluirLogicamente) {
+      const resultado = await this.prisma.assinante.deleteMany({ where: { id, ativo: true } });
+      return resultado.count === 1;
+    }
+
     const resultado = await this.prisma.assinante.updateMany({
       where: { id, ativo: true },
       data: { ativo: false },
     });
     return resultado.count === 1;
+  }
+
+  private obterExclusaoLogica(exclusaoLogica?: boolean): boolean {
+    if (exclusaoLogica !== undefined) return exclusaoLogica;
+
+    const valorConfigurado = process.env.EXCLUSAO_LOGICA;
+    if (valorConfigurado === undefined) return true;
+    if (valorConfigurado === "true") return true;
+    if (valorConfigurado === "false") return false;
+
+    throw new ErroAplicacao(500, "EXCLUSAO_LOGICA deve ser true ou false");
   }
 }

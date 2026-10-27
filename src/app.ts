@@ -6,7 +6,7 @@ import { criarRotasAssinantes } from "./presentation/routes/assinante-routes.js"
 import { AtualizarAssinante } from "./use_cases/atualizar-assinante.js";
 import { BuscarAssinante } from "./use_cases/buscar-assinante.js";
 import { CriarAssinante } from "./use_cases/criar-assinante.js";
-import { DesativarAssinante } from "./use_cases/desativar-assinante.js";
+import { DeletarAssinante } from "./use_cases/deletar-assinante.js";
 import { ListarAssinantes } from "./use_cases/listar-assinantes.js";
 
 export function criarApp(repositorio: AssinanteRepository) {
@@ -18,7 +18,7 @@ export function criarApp(repositorio: AssinanteRepository) {
     new ListarAssinantes(repositorio),
     new BuscarAssinante(repositorio),
     new AtualizarAssinante(repositorio),
-    new DesativarAssinante(repositorio),
+    new DeletarAssinante(repositorio),
   );
 
   app.use(criarRotasAssinantes(controller));
